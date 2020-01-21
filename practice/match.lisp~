@@ -1,0 +1,7 @@
+(make-package :match :use '(:cl)
+  )
+
+(in-package match)
+
+(defun variablep (x)
+  (char= (char x 0) '#\? ))

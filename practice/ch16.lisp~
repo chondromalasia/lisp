@@ -1,0 +1,63 @@
+(load "~/Projects/lisp/practice/util.lisp")
+
+;iunno
+;(shadow 'length)
+(defun length (l)
+  "Return number of members of list"
+  (check-type l list)
+  (if (null l) 0
+      (1+ (length (rest l)))))
+
+(defun member (obj l)
+  "Return True if OBJ is equal to a member of list L"
+  (check-type l list)
+  (cond ((null l) nil)
+	((eql obj (first l)) l)
+	(t (member obj (rest l)))))
+
+(defun before (e1 e2 l)
+  "Returns True if element e1 occurs before the element e2
+    in the list l"
+  (check-type e1 (satisfies util::elementp))
+  (check-type e2 (satisfies util::elementp))
+  (check-type l list)
+  (> (length (member e1 l))
+     (length (member e2 l))))
+
+(defun number-listp (l)
+  "Return T if all members of the list L are numbers,
+   NIL otherwise"
+  (check-type l list)
+  (cond ((null l) t)
+	((numberp (first l)) (number-listp (rest l)))
+	(t nil)))
+
+(defun same-length1 (l1 l2)
+  "Return T if lists l1 and l2 have the same length,
+   NIL otherwise"
+  (check-type l1 list)
+  (check-type l2 list)
+  (= (length l1) (length l2)))
+
+(defun same-length2 (l1 l2)
+  "Return T if lists l1 and l2 have the same length,
+   NIL otherwise"
+  (check-type l1 list)
+  (check-type l2 list)
+  (cond ((null l1) (null l2))
+	((null l2) nil)
+        (t (same-length2 (rest l1) (rest l2)))))
+
+;(shadow 'count)
+(defun count (e l)
+  "Return number of times element e appears in list l"
+  (check-type e (satisfies util::elementp))
+  (check-type l list)
+  (cond ((null l) 0)
+	((eql e (first l)) ( 1+ (count e (rest l))))
+	(t (count e (rest l)))))
+	
+; not done yet
+(defun eql-lelt (l1 l2)
+  (cond ((null l1) (null l2))
+	(t (eql (first l1) (first l2)))))

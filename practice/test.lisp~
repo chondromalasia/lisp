@@ -1,0 +1,16 @@
+(defun x-y (x y)
+  (if (eql y 0)
+      99999999
+      (/ x y)))
+
+
+(defun absval (x)
+  (cond ((< x 0) (- x))
+	((> x 0) x)))
+
+(defun sign (x)
+  (cond ((< x 0) '-)
+	((= x 0) 0)
+	((> x 0) '+)))
+
+

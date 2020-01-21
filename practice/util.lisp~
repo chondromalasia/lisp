@@ -1,0 +1,12 @@
+(make-package :util :use '(:cl)
+	      (:export elementp))
+
+(in-package util)
+
+(defun elementp (o)
+  (or
+   (symbolp o)
+   (characterp o)
+   (numberp o)
+   (packagep o)))
+
