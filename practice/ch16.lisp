@@ -83,3 +83,21 @@
 	((< n 1) (first l))
 	(t nil)))
 
+(defun allbut (n l)
+  "Return a list whole members are the members of l omitting the first n"
+  (check-type n integer)
+  (check-type l list)
+  (cond ((eql n 0) l)
+	((null (null l)) (allbut (- n 1) (rest l)))
+	(t nil)))
+
+(shadow 'assoc)
+(defun assoc (e al)
+  "Return the first element of al whose first member is eql to e"
+  
+  (check-type e (satisfies util::elementp))
+  (check-type al list)
+
+  (cond ((null al) nil)
+	(eql e (first (first al))) (first al))
+	(t (assoc e (rest al)))))
