@@ -1,6 +1,7 @@
 
 (defpackage :match
-  (:shadow boundp)
+  (:shadow :boundp
+	   :substitute)
   (:use :common-lisp))
 
 (in-package match)
@@ -47,13 +48,9 @@
   (check-type subs list)
   (cond
     ((null (match::variablep v)) nil)
-    ((list (assoc v subs)) (assoc v subs))
+    ((boundp v subs) (rest (assoc v subs)))
     (T nil)))
 
-(defun match (pat lst)
-  (check-type pat list)
-  (check-type lst list)
-  (clean_pairs (match1 pat lst '())))
 
 (defun clean_pairs (pairs)
   "Check on the substitutions of list of pairs
@@ -65,7 +62,7 @@
     ((equal '(T T) (first pairs)) '((T T)))
     ((not (boundp (first (first pairs)) (rest pairs)))
      (cons (first pairs) (clean_pairs (rest pairs))))
-    ((equal (bound-to (first (first pairs)) (rest pairs)) (first pairs))
+    ((equal (assoc (first (first pairs)) (rest pairs)) (first pairs))
      (clean_pairs (rest pairs)))
     (T nil)))
 
@@ -77,8 +74,42 @@
     ((eql (first pat) (first lst)) (match1 (rest pat) (rest lst) pairs))
     ((variablep (first pat))
      (cons (list (first pat) (first lst))
-	   (match1 (rest pat) (rest lst) pairs)))
-    ))
+	   (match1 (rest pat) (rest lst) pairs)))))
 
+
+(defun match (pat lst)
+  "Init for match1"
+  (check-type pat list)
+  (check-type lst list)
+  (clean_pairs (match1 pat lst '())))
+
+
+(defun substitute (pat subs)
+  "Return list where each variable (defined by variablep) is replaced
+   by term in subs"
+  (check-type pat list)
+  (check-type subs list)
+  (cond
+    ((null (first pat)) '())
+    ((variablep (first pat))
+     (cons
+      (first (bound-to (first pat) subs)) (substitute (rest pat) subs)))
+    ((not (variablep (first pat))) (cons (first pat) (substitute (rest pat) subs)))))
 
 	
+;; Work in progress, but you need to go to the website for it
+;; https://cse.buffalo.edu/~shapiro/Courses/CSE202/Notes/chapter18.html
+;; that's a good explanaish
+(defun match2 (pat lst pairs)
+  (cond
+    ((symbolp pat)
+     (cond
+       ((eql pat lst) (cons (list T T) pairs))
+       ((variablep pat) (cons (list pat lst) (cons (list T T) pairs)))
+       ((not (eql pat lst)) nil)))
+    (T 'butt)
+    ))
+
+(defun match2_wrapper (pat lst)
+  (match2 pat lst '()))
+
